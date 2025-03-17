@@ -50,26 +50,20 @@ class ManageTasksController extends Controller
     {
         try {
             $validated = $request->validated();
-
-            // Start database transaction
             DB::beginTransaction();
-
-            // Handle File Upload
             if ($request->hasFile('document')) {
                 $file = $request->file('document');
-
                 $timestamp = now()->format('d-m-Y-His'); // Format: DD-MM-YYYY-His
                 $originalExtension = $file->getClientOriginalExtension();
                 $newFileName = 'document-' . $timestamp . '.' . $originalExtension;
                 $filePath = $file->storeAs('uploads/documents', $newFileName, 'public');
-
                 $validated['document'] = $filePath; // Save path in DB
             }
             $created = ManageTasks::create($validated);
             DB::commit();
             return response()->json([
                 'status' => true,
-                'message' => __('Created successfully'), // Supports localization
+                'message' => __('Created successfully'),
                 'data' => new ManageTasksResource($created),
             ], JsonResponse::HTTP_CREATED);
         } catch (\Exception $e) {
