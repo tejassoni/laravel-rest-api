@@ -27,10 +27,10 @@ class ManageTasksRequest extends FormRequest
         return [
             'title' => 'required|string|max:100',
             'description' => 'required|string',
-            'category' => 'required|string|max:50',
+            'category' => 'required|string|max:50|in:IT,Marketing,Finance,HR,Admin',
             'status' => 'required|integer|in:0,1',
-            'days' => 'required|integer',
-            'document' => 'required|string',
+            'days' => 'required|integer|min:1|max:365',
+            'document' => 'required|file|mimes:jpeg,png,jpg,gif,xls,xlsx,csv,doc,docx,pdf,mp3,wav,mp4,mkv,avi,txt|max:5120', // Validation rules max file size 5mb
         ];
     }
 
@@ -57,7 +57,7 @@ class ManageTasksRequest extends FormRequest
         throw new HttpResponseException(response()->json([
             'success' => false,
             'message' => 'Validation error',
-            'error_messages' => $validator->errors(),
+            'error' => $validator->errors(),
             'data' => [],
         ], JsonResponse::HTTP_UNPROCESSABLE_ENTITY));
     }
